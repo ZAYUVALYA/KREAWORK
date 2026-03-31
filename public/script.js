@@ -127,17 +127,7 @@ function setupEventListeners() {
     });
 
     // 3. Chat Step
-    DOMElements.chat.input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // prevent new line
-            if(!DOMElements.chat.btnSend.disabled && DOMElements.chat.input.value.trim() !== '') {
-                DOMElements.chat.form.dispatchEvent(new Event('submit'));
-            }
-        }
-    });
-
-    DOMElements.chat.form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+    const handleChatSubmit = async () => {
         const text = DOMElements.chat.input.value.trim();
         if(!text) return;
         
@@ -150,6 +140,20 @@ function setupEventListeners() {
         DOMElements.chat.btnSend.disabled = true;
         
         await processAITurn();
+    };
+
+    DOMElements.chat.input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault(); // prevent new line
+            if(!DOMElements.chat.btnSend.disabled && DOMElements.chat.input.value.trim() !== '') {
+                handleChatSubmit();
+            }
+        }
+    });
+
+    DOMElements.chat.form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleChatSubmit();
     });
 
     DOMElements.chat.btnEnd.addEventListener('click', () => {

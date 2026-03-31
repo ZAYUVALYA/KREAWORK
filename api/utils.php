@@ -52,10 +52,13 @@ function getRequestBody() {
 
 // Communicator function to OpenRouter
 function callOpenRouter($systemPrompt, $conversation = [], $forceJson = false) {
-    // 1. Get Environment configs
-    $keysStr = getenv('OPENROUTER_KEYS');
-    $modelsStr = getenv('OPENROUTER_MODELS');
-    $baseUrl = getenv('OPENROUTER_BASE_URL') ?: 'https://openrouter.ai/api/v1/chat/completions';
+    // 1. Get Environment configs (Check getenv, $_ENV, and $_SERVER for Vercel support)
+    $keysStr = getenv('OPENROUTER_KEYS') ?: (isset($_ENV['OPENROUTER_KEYS']) ? $_ENV['OPENROUTER_KEYS'] : (isset($_SERVER['OPENROUTER_KEYS']) ? $_SERVER['OPENROUTER_KEYS'] : ''));
+    $modelsStr = getenv('OPENROUTER_MODELS') ?: (isset($_ENV['OPENROUTER_MODELS']) ? $_ENV['OPENROUTER_MODELS'] : (isset($_SERVER['OPENROUTER_MODELS']) ? $_SERVER['OPENROUTER_MODELS'] : ''));
+    
+    $baseUrl = getenv('OPENROUTER_BASE_URL');
+    if (!$baseUrl) $baseUrl = isset($_ENV['OPENROUTER_BASE_URL']) ? $_ENV['OPENROUTER_BASE_URL'] : (isset($_SERVER['OPENROUTER_BASE_URL']) ? $_SERVER['OPENROUTER_BASE_URL'] : '');
+    if (!$baseUrl) $baseUrl = 'https://openrouter.ai/api/v1/chat/completions';
     
     if (!$keysStr) {
         jsonResponse(["error" => "OPENROUTER_KEYS not found in environment"], 500);
