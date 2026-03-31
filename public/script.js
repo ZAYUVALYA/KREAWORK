@@ -426,16 +426,30 @@ async function processAITurn() {
 }
 
 function addMessageToChat(role, text) {
-    const bgClass = role === 'user' ? 'msg-user' : 'msg-ai';
+    const isUser = role === 'user';
+    const bgClass = isUser ? 'msg-user' : 'msg-ai';
     
     const wrapper = document.createElement('div');
-    wrapper.className = `flex w-full ${role === 'user' ? 'justify-end' : 'justify-start'}`;
+    wrapper.className = `flex w-full ${isUser ? 'justify-end' : 'justify-start'} mb-2 group`;
     
     // Simple markdown link/bold parsing for AI just in case
     const parsedText = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                            .replace(/\n/g, '<br/>');
 
+    // For AI, add a small avatar icon on the left
+    let avatarHTML = '';
+    if (!isUser) {
+        avatarHTML = `
+            <div class="flex-shrink-0 mr-4 mt-1">
+                <div class="w-8 h-8 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-500 shadow-sm">
+                    <i class="fa-solid fa-robot text-xs"></i>
+                </div>
+            </div>
+        `;
+    }
+
     wrapper.innerHTML = `
+        ${avatarHTML}
         <div class="msg-bubble ${bgClass}">
             ${parsedText}
         </div>
