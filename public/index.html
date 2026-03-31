@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KREAWORK | Professional AI Interview Coach</title>
+    <meta name="description" content="Practice realistic job interviews with an AI-powered HRD agent. Upload your CV, simulate an interview, and get a professional evaluation.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6', // Bright Blue base
+                            600: '#2563eb', // Primary button blue
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                            950: '#172554',
+                        },
+                        glass: 'rgba(255, 255, 255, 0.7)',
+                        glassBorder: 'rgba(255, 255, 255, 0.8)',
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'blob': 'blob 10s infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.05)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.95)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans antialiased overflow-x-hidden relative selection:bg-brand-200 selection:text-brand-900 flex flex-col items-center">
+
+    <!-- Background Decoration (Light Mode) -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-blue-200/50 rounded-full mix-blend-multiply filter blur-[100px] animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[40rem] h-[40rem] bg-indigo-200/50 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 2s;"></div>
+        <div class="absolute bottom-[-10%] left-[20%] w-[40rem] h-[40rem] bg-cyan-200/40 rounded-full mix-blend-multiply filter blur-[100px] animate-blob" style="animation-delay: 4s;"></div>
+        <!-- Light clean noise overlay -->
+        <div class="absolute inset-0 z-0 opacity-10 pointer-events-none mix-blend-overlay" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=\"0 0 200 200\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cfilter id=\"noiseFilter\"%3E%3CfeTurbulence type=\"fractalNoise\" baseFrequency=\"0.75\" numOctaves=\"3\" stitchTiles=\"stitch\"/%3E%3C/filter%3E%3Crect width=\"100%25\" height=\"100%25\" filter=\"url(%23noiseFilter)\"/%3E%3C/svg%3E');"></div>
+    </div>
+
+    <!-- Top Navigation -->
+    <header class="w-full relative z-10 px-6 py-4 flex justify-between items-center max-w-7xl mx-auto backdrop-blur-md bg-white/60 border-b border-slate-200/60 sticky top-0 shadow-sm">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="location.reload()">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-indigo-600 flex items-center justify-center text-white font-display font-bold text-xl shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-300">
+                K
+            </div>
+            <h1 class="font-display font-bold text-2xl tracking-tight text-slate-800 group-hover:text-brand-600 transition-colors">KREA<span class="text-brand-500">WORK</span></h1>
+        </div>
+        <div class="text-sm font-semibold text-brand-600 hidden sm:block px-4 py-2 rounded-full bg-brand-50 border border-brand-100 shadow-sm">
+            AI Interview Coach
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="app-container" class="relative z-10 w-full max-w-4xl mx-auto flex-grow flex flex-col p-4 sm:p-6 md:p-8 overflow-hidden h-full mt-2">
+
+        <!-- STEP 1: UPLOAD DOCUMENTS -->
+        <div id="step-upload" class="step-container active flex flex-col h-full justify-center">
+            <div class="text-center mb-10 max-w-2xl mx-auto">
+                <h2 class="font-display text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">Master your next interview.</h2>
+                <p class="text-slate-500 text-lg leading-relaxed font-medium">Experience a realistic AI-driven interview simulation designed for professionals. Upload your CV to begin.</p>
+            </div>
+
+            <div class="glass-panel rounded-3xl p-8 border border-glassBorder shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group transition-all duration-300 hover:shadow-[0_8px_40px_rgb(59,130,246,0.1)]">
+                <div class="absolute inset-0 bg-gradient-to-b from-brand-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                
+                <div class="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-300 rounded-2xl bg-slate-50/50 relative cursor-pointer hover:bg-brand-50/50 hover:border-brand-400 transition-colors duration-300" id="drop-zone">
+                    <input type="file" id="file-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png">
+                    
+                    <div class="w-20 h-20 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mb-6 shadow-sm group-hover:scale-110 transition-transform duration-500 z-0">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl group-hover:-translate-y-1 transition-transform"></i>
+                    </div>
+                    
+                    <h3 class="text-xl font-bold mb-2 text-slate-800">Upload your CV & Portfolio</h3>
+                    <p class="text-slate-500 text-center text-sm max-w-xs leading-relaxed font-medium">Drag and drop files here, or click to browse. Supports PDF, DOCX, TXT, and Images.</p>
+                    <p class="text-xs text-brand-600 mt-5 font-semibold px-4 py-1.5 bg-brand-50 border border-brand-100 rounded-full shadow-sm"><i class="fa-solid fa-shield-halved mr-1"></i> Processed securely in your browser</p>
+                </div>
+
+                <!-- Upload Progress & File List -->
+                <div id="file-list-container" class="mt-6 hidden flex-col gap-3 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                    <!-- Files injected dynamically -->
+                </div>
+
+                <div id="extraction-status" class="mt-6 hidden">
+                    <div class="flex justify-between text-sm mb-2 font-semibold">
+                        <span class="text-slate-600" id="extraction-text">Extracting document text...</span>
+                        <span class="text-brand-600" id="extraction-percent">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden flex">
+                        <div id="extraction-bar" class="bg-gradient-to-r from-brand-400 to-blue-600 h-2.5 rounded-full transition-all duration-300 shadow-sm" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-center mt-8">
+                    <button id="btn-next-to-form" class="hidden relative inline-flex items-center justify-center px-8 py-3.5 font-bold text-white transition-all duration-200 bg-brand-600 font-display rounded-full hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-600 shadow-md hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed group overflow-hidden">
+                        <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
+                        <span class="relative">Configure Setup <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: JOB DETAILS FORM -->
+        <div id="step-setup" class="step-container hidden">
+            <div class="mb-8">
+                <button id="btn-back-upload" class="text-slate-500 hover:text-brand-600 transition-colors flex items-center gap-2 mb-4 text-sm font-semibold group bg-white/50 px-3 py-1.5 rounded-full shadow-sm border border-slate-200"><i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back</button>
+                <h2 class="font-display text-3xl font-extrabold text-slate-900 mb-2 tracking-tight">Job Context</h2>
+                <p class="text-slate-500 font-medium">Tell us about the role you are aiming for so the AI can tailor the interview.</p>
+            </div>
+
+            <div class="glass-panel p-6 sm:p-8 rounded-3xl border border-glassBorder shadow-[0_8px_30px_rgb(0,0,0,0.06)] relative">
+                <form id="job-setup-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Col -->
+                        <div class="space-y-6">
+                            <div class="form-group">
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Target Position <span class="text-red-500">*</span></label>
+                                <input type="text" id="job-position" required placeholder="e.g. Senior Frontend Engineer" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm">
+                            </div>
+                            <div class="form-group">
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Company / Industry (Optional)</label>
+                                <input type="text" id="job-additional" placeholder="e.g. Fintech Startup" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="form-group">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">Location</label>
+                                    <input type="text" id="job-country" placeholder="Country" value="Indonesia" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm">
+                                </div>
+                                <div class="form-group">
+                                    <label class="block text-sm font-bold text-slate-700 mb-2">&nbsp;</label>
+                                    <input type="text" id="job-city" placeholder="City" class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Right Col -->
+                        <div class="flex flex-col h-full">
+                            <div class="form-group flex-grow flex flex-col h-full">
+                                <label class="block text-sm font-bold text-slate-700 mb-2">Job Requirements <span class="text-red-500">*</span></label>
+                                <textarea id="job-requirements" required placeholder="Paste the job description or key requirements here..." class="w-full flex-grow min-h-[150px] md:min-h-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all shadow-sm resize-y custom-scrollbar"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-6 mt-6 border-t border-slate-200 flex justify-end">
+                        <button type="submit" id="btn-start-interview" class="relative inline-flex items-center justify-center px-8 py-3.5 font-bold text-white transition-all duration-200 bg-brand-600 font-display rounded-full hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-600 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 group overflow-hidden">
+                            <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
+                            <span class="relative flex items-center"><i class="fa-solid fa-play mr-2"></i> Start Interview Simulation</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- STEP 3: INTERVIEW CHAT -->
+        <div id="step-interview" class="step-container hidden h-[85vh] flex flex-col relative w-full pt-2">
+            
+            <!-- Interview Header -->
+            <div class="glass-panel rounded-2xl p-4 sm:px-6 border border-glassBorder flex items-center justify-between shadow-sm mb-4 flex-shrink-0 z-20">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-brand-500 flex items-center justify-center text-white border-2 border-white shadow-sm">
+                            <i class="fa-solid fa-user-tie text-xl"></i>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+                    </div>
+                    <div>
+                        <h3 class="font-display font-bold text-slate-900">AI Recruiting Manager</h3>
+                        <p class="text-xs text-brand-600 font-bold tracking-wide uppercase"><i class="fa-solid fa-circle-dot animate-pulse text-red-500 mr-1 text-[10px]"></i> Live Session</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 sm:gap-6">
+                    <div class="hidden sm:flex flex-col items-end">
+                        <span class="text-xs text-slate-500 uppercase tracking-widest font-bold">Progress</span>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-24 h-2 bg-slate-200 rounded-full overflow-hidden shadow-inner">
+                                <div id="interview-progress-bar" class="h-full bg-brand-500 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+                            </div>
+                            <span id="interview-progress-text" class="text-sm font-bold text-slate-700">0/10</span>
+                        </div>
+                    </div>
+                    <button id="btn-end-interview" class="h-10 px-4 rounded-xl border border-red-200 text-red-600 bg-red-50 hover:bg-red-100 hover:border-red-300 transition-colors font-bold text-sm flex items-center gap-2 shadow-sm" title="End interview early">
+                        <i class="fa-solid fa-stop"></i> <span class="hidden sm:inline">Finish</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat History Area -->
+            <div class="flex-grow overflow-hidden relative glass-panel rounded-2xl border border-glassBorder shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex flex-col bg-white/40">
+                <div id="chat-messages" class="flex-grow overflow-y-auto p-4 sm:p-6 custom-scrollbar flex flex-col gap-6 w-full relative z-0">
+                    <!-- Messages will be injected here -->
+                    <div class="text-center text-slate-500 font-medium text-sm my-8 loading-text" id="chat-loading-init">
+                        <i class="fa-solid fa-circle-notch fa-spin text-brand-500 mr-2 text-lg"></i> Connecting to AI HRD...
+                    </div>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="p-4 bg-white/90 backdrop-blur-xl border-t border-slate-200 w-full relative z-10 shadow-[0_-10px_15px_rgba(0,0,0,0.02)]">
+                    <form id="chat-form" class="relative max-w-4xl mx-auto flex items-end gap-3 z-20">
+                        <div class="relative flex-grow shadow-sm rounded-2xl bg-white border border-slate-300 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
+                            <textarea id="chat-input" rows="1" placeholder="Type your answer here... (Shift+Enter for new line)" class="w-full bg-transparent rounded-2xl py-3.5 pl-4 pr-12 text-slate-800 placeholder-slate-400 focus:outline-none resize-none max-h-40 custom-scrollbar block min-h-[52px]" disabled></textarea>
+                            
+                            <div class="absolute bottom-2 right-2 text-xs text-brand-500" id="typing-indicator" style="display: none;">
+                                <div class="flex gap-1 items-center px-3 py-1.5 bg-brand-50 rounded-lg border border-brand-100 shadow-sm">
+                                    <div class="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce"></div>
+                                    <div class="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                    <div class="w-1.5 h-1.5 bg-brand-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" id="btn-send-chat" disabled class="flex-shrink-0 w-[52px] h-[52px] rounded-2xl bg-brand-600 flex items-center justify-center text-white hover:bg-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed group shrink-0">
+                            <i class="fa-solid fa-paper-plane text-lg group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                        </button>
+                    </form>
+                    <div class="text-center mt-2">
+                        <span class="text-[10px] sm:text-xs font-medium text-slate-400">The AI acts dynamically. Your answers directly influence the conversation flow.</span>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- STEP 4: EVALUATION & RESULTS -->
+        <div id="step-results" class="step-container hidden w-full py-4 max-w-5xl self-center">
+            
+            <div id="evaluation-loading" class="flex flex-col items-center justify-center h-[50vh] text-center">
+                <div class="w-20 h-20 relative mb-6">
+                    <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                    <div class="absolute inset-0 rounded-full border-4 border-brand-500 border-t-transparent animate-spin"></div>
+                    <i class="fa-solid fa-brain absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-brand-500 text-2xl animate-pulse"></i>
+                </div>
+                <h2 class="text-2xl font-display font-extrabold text-slate-900 mb-2">Analyzing Performance</h2>
+                <p class="text-slate-500 font-medium">The AI Evaluator is generating your score card...</p>
+            </div>
+
+            <div id="evaluation-content" class="hidden flex-col gap-6">
+                
+                <div class="flex flex-col md:flex-row gap-6 w-full">
+                    <!-- Left: Score Card (Downloadable target) -->
+                    <div id="score-card" class="relative overflow-hidden w-full md:w-1/3 bg-white rounded-3xl p-8 border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.06)] flex flex-col items-center flex-shrink-0">
+                        <!-- Decorative background element for the card -->
+                        <div class="absolute top-0 right-0 p-3 opacity-[0.05]"><i class="fa-solid fa-quote-right text-8xl text-brand-500"></i></div>
+                        
+                        <div class="text-center mb-6 relative z-10 w-full">
+                            <h3 class="font-display text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">KREAWORK Output</h3>
+                            <h4 class="text-base text-brand-600 font-extrabold" id="result-job-title">Job Position</h4>
+                        </div>
+                        
+                        <div class="relative w-40 h-40 mb-6 flex items-center justify-center shrink-0">
+                            <!-- Circular Progress SVG generated by JS later. Placeholder here -->
+                            <svg class="w-full h-full transform -rotate-90 drop-shadow-md" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" fill="none" class="stroke-slate-100" stroke-width="8"></circle>
+                                <circle id="score-circle-path" cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round" class="transition-all duration-1500 ease-out"></circle>
+                                <defs>
+                                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#3b82f6" />
+                                        <stop offset="100%" stop-color="#10b981" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                <span class="font-display font-black text-5xl text-slate-900 tracking-tighter" id="eval-score-num">0</span>
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Score</span>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full space-y-4 text-sm relative z-10">
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 w-full">
+                                <h5 class="text-emerald-600 font-bold mb-3 flex items-center text-sm"><i class="fa-solid fa-circle-check mr-2"></i> Top Strengths</h5>
+                                <ul class="list-none space-y-2 text-slate-600 text-[13px] font-medium" id="eval-strengths-list">
+                                    <!-- injected -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Brand Footer on Card -->
+                        <div class="mt-8 pt-5 border-t border-slate-100 w-full text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                <span class="w-6 h-6 rounded-md bg-gradient-to-br from-brand-500 to-indigo-600 shadow-sm text-xs font-bold text-white flex items-center justify-center">K</span>
+                                <span class="text-xs text-slate-400 font-bold tracking-wider">KREASIOKA AI</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Detailed Feedback & Actions -->
+                    <div class="flex-grow flex flex-col gap-6 w-full">
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-[0_8px_30px_rgb(0,0,0,0.04)] h-full flex flex-col">
+                            <h3 class="font-display text-2xl font-extrabold text-slate-900 mb-6 border-b border-slate-100 pb-4">Detailed Feedback</h3>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-grow">
+                                <div>
+                                    <h4 class="text-amber-500 font-bold mb-4 flex items-center text-sm uppercase tracking-wider"><i class="fa-solid fa-triangle-exclamation mr-2"></i> Areas to Improve</h4>
+                                    <ul class="space-y-4 text-sm text-slate-600 font-medium ml-1" id="eval-weaknesses-list">
+                                        <!-- injected -->
+                                    </ul>
+                                </div>
+                                <div class="bg-brand-50 border border-brand-100 shadow-sm rounded-2xl p-5 md:p-6">
+                                    <h4 class="text-brand-600 font-bold mb-4 flex items-center text-sm uppercase tracking-wider"><i class="fa-solid fa-lightbulb mr-2"></i> Actionable Advice</h4>
+                                    <ul class="space-y-4 text-sm text-slate-700 font-medium" id="eval-suggestions-list">
+                                        <!-- injected -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <button id="btn-share-results" class="bg-white hover:bg-slate-50 border border-slate-200 shadow-sm hover:border-brand-300 py-4 px-4 rounded-2xl transition-all font-bold text-slate-700 flex items-center justify-center gap-2 group text-sm">
+                                <i class="fa-brands fa-instagram text-pink-500 text-lg group-hover:scale-110 transition-transform"></i> Share to Story
+                            </button>
+                            <button id="btn-generate-cv" class="bg-white hover:bg-brand-50 border border-slate-200 shadow-sm hover:border-brand-400 hover:text-brand-700 py-4 px-4 rounded-2xl transition-all font-bold text-slate-700 flex items-center justify-center gap-2 group text-sm relative overflow-hidden">
+                                <div class="absolute inset-0 bg-brand-50 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                                <i class="fa-solid fa-file-invoice text-brand-500 text-lg group-hover:-translate-y-1 transition-transform relative z-10"></i> <span class="relative z-10">Generate ATS CV</span>
+                            </button>
+                            <button id="btn-restart" class="bg-slate-100 hover:bg-slate-200 border border-slate-200 py-4 px-4 rounded-2xl transition-all font-bold text-slate-600 flex items-center justify-center gap-2 text-sm">
+                                <i class="fa-solid fa-rotate-right"></i> Start Over
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- UI MODALS -->
+
+    <!-- CV Modal -->
+    <div id="cv-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 py-8 sm:py-10 opacity-0 transition-opacity duration-300 overflow-hidden">
+        <div class="bg-white border border-slate-200 w-full max-w-4xl h-full max-h-[90vh] rounded-3xl shadow-2xl flex flex-col transform scale-95 transition-transform duration-300" id="cv-modal-content">
+            <div class="flex justify-between items-center p-5 sm:p-6 border-b border-slate-100 shrink-0 bg-slate-50 rounded-t-3xl">
+                <h3 class="font-display font-bold text-xl text-slate-900 flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-brand-500"></i> AI Generated ATS-Friendly CV</h3>
+                <button id="btn-close-cv" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 flex items-center justify-center text-slate-600 transition-colors shadow-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="flex-grow overflow-hidden relative bg-slate-100/50 rounded-b-3xl flex flex-col p-4 sm:p-6">
+                <!-- Loader -->
+                <div id="cv-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-white/95 backdrop-blur-sm z-20 rounded-b-3xl">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-brand-500 mb-4"></i>
+                    <p class="text-slate-600 font-bold tracking-wide">Crafting an ATS optimized layout...</p>
+                </div>
+                
+                <!-- Markdown content wrapper (styling mapped in CSS) -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm flex-grow flex flex-col max-w-3xl mx-auto w-full">
+                    <div id="cv-document" class="flex-grow overflow-y-auto p-6 sm:p-10 text-slate-800 custom-scrollbar html-cv-content">
+                        <!-- injected dynamically from markdown -->
+                    </div>
+                </div>
+                
+                <!-- Action bar -->
+                <div class="shrink-0 pt-5 flex justify-between items-center mt-2 max-w-3xl mx-auto w-full">
+                    <p class="text-xs font-semibold text-slate-500"><i class="fa-solid fa-info-circle mr-1 text-brand-500"></i> Formatted for high ATS parsing scores.</p>
+                    <button id="btn-export-cv" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold shadow-md shadow-blue-500/30 hover:-translate-y-0.5 transition-all flex items-center gap-2 text-sm z-10 w-auto">
+                        <i class="fa-solid fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- External Libraries Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <!-- We reference Tesseract locally in worker but could use main thread if worker fails -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+</html>

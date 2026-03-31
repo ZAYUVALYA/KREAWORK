@@ -1,0 +1,149 @@
+/* Custom Base Styles & Utilities for KREAWORK (Light Theme) */
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1; /* slate-300 */
+    border-radius: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8; /* slate-400 */
+}
+
+/* Glass panel */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85); /* Highly translucent white */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* Step transition animations */
+.step-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    position: absolute;
+    width: 100%;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.step-container.active {
+    opacity: 1;
+    transform: translateY(0);
+    position: relative;
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* Chat bubble styles */
+.msg-bubble {
+    max-w: 85%;
+    padding: 1rem 1.15rem;
+    border-radius: 1.25rem;
+    animation: slideInUp 0.3s ease-out forwards;
+    position: relative;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    word-break: break-word;
+}
+
+.msg-ai {
+    background-color: #f8fafc; /* slate-50 */
+    border: 1px solid #e2e8f0; /* slate-200 */
+    border-bottom-left-radius: 0.25rem;
+    color: #334155; /* slate-700 */
+    align-self: flex-start;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.msg-ai strong {
+    color: #0f172a; /* Make bold text darker for AI */
+    font-weight: 700;
+}
+
+.msg-user {
+    background: linear-gradient(135deg, #3b82f6, #4f46e5); /* blue-500 to indigo-600 */
+    color: white;
+    border-bottom-right-radius: 0.25rem;
+    align-self: flex-end;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Markdown HTML styling for ATS CV */
+.html-cv-content {
+    font-family: Arial, Helvetica, sans-serif; /* Standard ATS fonts */
+    color: #111827;
+    line-height: 1.6;
+}
+
+.html-cv-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111827;
+    border-bottom: 2px solid #111827;
+    padding-bottom: 0.5rem;
+}
+
+.html-cv-content h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #374151;
+    border-bottom: 1px solid #d1d5db;
+    padding-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.html-cv-content h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    color: #111827;
+}
+
+.html-cv-content p {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.html-cv-content ul {
+    list-style-type: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.html-cv-content li {
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+}
+
+.html-cv-content strong {
+    font-weight: 600;
+}
+
+/* Score Circle Gradient Animation logic handles strokeDashOffset in JS */
+#score-circle-path {
+    transition: stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1);
+}
